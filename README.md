@@ -23,3 +23,20 @@ A premium Tampermonkey-compatible userscript that allows you to bulk add friends
 - Vanilla JS (ES6+) for logic
 - CSS (Vanilla) for rich custom styling
 - Google Fonts (Outfit & Inter) for typography
+
+---
+
+# MH - SBPack Opener Userscript
+
+A userscript that lets you buy and open SUPER|brie+ Supply Packs from one small panel.
+
+## Features
+- **Quick Access**: Adds an **SBPack Opener** entry next to the Tournaments link in the game menu.
+- **Open Packs**: Shows how many packs you own, then opens any amount at once (use **Max** to open them all). Lists the loot you got.
+- **Buy Packs**: Buys SUPER|brie+ Supply Packs from the King's Cart. Asks you to confirm before buying, then shows how many you bought and how many King's Credits you have left.
+- **Draggable Panel**: Drag the panel around by its header. **Refresh** reloads your pack count.
+
+## How to Install
+1. Install a userscript manager such as [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
+2. Create a new userscript and copy the contents of [`sbpack-opener.user.js`](sbpack-opener.user.js) into it.
+3. Save the script, open [MouseHunt](https://www.mousehuntgame.com/), and click **SBPack Opener** in the menu.
