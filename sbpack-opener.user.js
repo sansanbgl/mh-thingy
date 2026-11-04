@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         MH - SBPack Opener
-// @description  Open your SUPER|brie+ Supply Packs in a click!
+// @description  Buy and open your SUPER|brie+ Supply Packs in a click!
 // @author       Umar Hasan
-// @version      1.0.0
+// @version      1.1.0
 // @match        https://www.mousehuntgame.com/*
 // @match        https://apps.facebook.com/mousehunt/*
 // @icon         https://www.google.com/s2/favicons?domain=mousehuntgame.com
@@ -119,6 +119,21 @@ function openSbPack(quantity) {
     });
 }
 
+function buySbPack(quantity) {
+    return new Promise((resolve, reject) => {
+        postSbPackReq("https://www.mousehuntgame.com/managers/ajax/purchases/itempurchase.php",
+                `sn=Hitgrab&hg_is_ajax=1&type=${SB_PACK_TYPE}&quantity=${quantity}&buy=1&is_kings_cart_item=1&uh=${user.unique_hash}`
+               ).then(res => {
+            try {
+                resolve(JSON.parse(res.responseText));
+            } catch (error) {
+                console.log(error);
+                reject(error);
+            }
+        }, reject);
+    });
+}
+
 async function renderSbPack() {
     document
      .querySelectorAll("#sbpack-box")
@@ -207,6 +222,25 @@ async function renderSbPack() {
     actionDiv.appendChild(maxBtn);
     actionDiv.appendChild(openBtn);
 
+    const buyDiv = document.createElement("div");
+    buyDiv.style.marginTop = "8px";
+    buyDiv.style.paddingTop = "8px";
+    buyDiv.style.borderTop = "1px solid #ccc";
+
+    const buyQtyInput = document.createElement("input");
+    buyQtyInput.type = "number";
+    buyQtyInput.min = "1";
+    buyQtyInput.value = "1";
+    buyQtyInput.style.width = "60px";
+
+    const buyBtn = document.createElement("button");
+    buyBtn.textContent = "Buy";
+    buyBtn.style.marginLeft = "5px";
+    buyBtn.style.cursor = "pointer";
+
+    buyDiv.appendChild(buyQtyInput);
+    buyDiv.appendChild(buyBtn);
+
     const lootDiv = document.createElement("div");
     lootDiv.id = "sbpack-loot";
     lootDiv.style.marginTop = "8px";
@@ -283,12 +317,47 @@ async function renderSbPack() {
         maxBtn.disabled = false;
     };
 
+    buyBtn.onclick = async function () {
+        var qty = Math.floor(Number(buyQtyInput.value));
+        if (!(qty > 0)) {
+            showSbPackToast("Enter an amount of at least 1.", "error");
+            return;
+        }
+        if (!confirm("Buy ".concat(qty, " SUPER|brie+ Supply Pack(s)?"))) {
+            return;
+        }
+        buyBtn.disabled = true;
+        try {
+            var data = await buySbPack(qty);
+            if (data.success == "1") {
+                var bought = data.items && data.items[SB_PACK_TYPE];
+                var boughtQty = bought ? bought.quantity : qty;
+                var credits = data.inventory && data.inventory.prize_credit_stat_item;
+                lootDiv.innerText = "Bought ".concat(boughtQty, " pack(s).",
+                    credits ? "\nKing's Credits left: " + Number(credits.quantity).toLocaleString() : "");
+                var newPack = data.inventory && data.inventory[SB_PACK_TYPE];
+                if (newPack) {
+                    setPack(newPack);
+                } else {
+                    await loadPack();
+                }
+                showSbPackToast("Bought ".concat(boughtQty, " SB Pack(s)!"), "success");
+            } else {
+                showSbPackToast(data.error_message || data.message || "Failed to buy SB Pack!", "error");
+            }
+        } catch (error) {
+            showSbPackToast("Ajax Request Failed!", "error");
+        }
+        buyBtn.disabled = false;
+    };
+
     const footer = document.createElement("div");
     footer.style.marginTop = "8px";
     footer.appendChild(refreshBtn);
 
     content.appendChild(packRow);
     content.appendChild(actionDiv);
+    content.appendChild(buyDiv);
     content.appendChild(lootDiv);
     content.appendChild(footer);
     div.appendChild(header);
