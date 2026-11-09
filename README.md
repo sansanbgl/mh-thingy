@@ -15,7 +15,7 @@ A premium Tampermonkey-compatible userscript that allows you to bulk add friends
 
 ## How to Install
 1. Install a userscript manager such as [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/) in your browser.
-2. Create a new userscript and copy the contents of [`mh-add-friend.user.js`](file:///home/umarhasan/Git/mh-add-friend/mh-add-friend.user.js) into it.
+2. Create a new userscript and copy the contents of [`mh-add-friend.user.js`](mh-add-friend.user.js) into it.
 3. Save the script.
 4. Navigate to [MouseHunt](https://www.mousehuntgame.com/) and click the **Bulk Add Friends** floating action button in the bottom right corner of the page.
 
